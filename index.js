@@ -79,7 +79,7 @@ async function run() {
     }
 }
 run().catch(console.dir)
-
+// checking the server working or not!
 
 app.get('/', (req, res) => {
     res.send('running server')
