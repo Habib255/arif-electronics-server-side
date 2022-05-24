@@ -18,6 +18,9 @@ async function run() {
     try {
         await client.connect()
         const productionCollection = client.db('productStock').collection('product')
+
+        //get method-
+
         app.get('/product', async (req, res) => {
             const query = {}
             const cursor = productionCollection.find(query)
@@ -78,7 +81,7 @@ async function run() {
 
     }
 }
-run().catch(console.dir)
+run().catch(console.dir);
 // checking the server working or not!
 
 app.get('/', (req, res) => {
