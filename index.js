@@ -29,10 +29,38 @@ async function run() {
             const product = await productionCollection.findOne(query);
             res.send(product);
         });
+        app.get('/user', async (req, res) => {
+            const email = req.query.email;
+            const query = { userEmail: email };
+            const cursor = productionCollection.find(query);
+            const userItems = await cursor.toArray()
+            res.send(userItems);
+        });
         app.post('/product', async (req, res) => {
             const addProduct = req.body;
             console.log('add a new product', addProduct)
             const result = await productionCollection.insertOne(addProduct)
+            res.send(result)
+        });
+        app.delete('/product/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await productionCollection.deleteOne(query)
+            res.send(result)
+        });
+        app.put('/updateProduct/:id', async (req, res) => {
+            const id = req.params.id
+            const product = req.body
+            console.log(product)
+            const query = { _id: ObjectId(id) }
+            const options = { upsert: true }
+            const updatedProduct = {
+                $set: {
+                    quantity: product.newAmount
+                }
+            }
+            const result = await productionCollection.updateOne(query, updatedProduct, options)
+
             res.send(result)
         })
     }
