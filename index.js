@@ -9,6 +9,7 @@ const app = express();
 app.use(cors())
 app.use(express.json())
 
+//set connection
 
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.SERVER_PASS}@cluster0.r9sfv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -36,33 +37,42 @@ async function run() {
             const userItems = await cursor.toArray()
             res.send(userItems);
         });
+
+        //data insert in server
+
         app.post('/product', async (req, res) => {
             const addProduct = req.body;
-            console.log('add a new product', addProduct)
             const result = await productionCollection.insertOne(addProduct)
             res.send(result)
         });
+
+        //data delete from server and UI
         app.delete('/product/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
             const result = await productionCollection.deleteOne(query)
             res.send(result)
         });
+
+        // data update from UI to server
         app.put('/updateProduct/:id', async (req, res) => {
             const id = req.params.id
-            const product = req.body
+            const product = req.body.newAmount
             console.log(product)
             const query = { _id: ObjectId(id) }
             const options = { upsert: true }
             const updatedProduct = {
                 $set: {
-                    quantity: product.newAmount
+                    quantity: product
                 }
             }
             const result = await productionCollection.updateOne(query, updatedProduct, options)
 
             res.send(result)
         })
+
+
+
     }
     finally {
 
